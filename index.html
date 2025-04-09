@@ -50,7 +50,14 @@
 
   <h2>Rumble Multi-Video Viewer</h2>
 
-  <input type="text" id="videoUrl" placeholder="Paste Rumble video link" />
+function getEmbedLink(rumbleUrl) {
+  if (rumbleUrl.includes("rumble.com/embed")) {
+    return rumbleUrl + "&autoplay=1&mute=1";
+  } else {
+    alert("Please use the Rumble embed link (starts with rumble.com/embed/...)");
+    return null;
+  }
+}
   <input type="number" id="videoCount" placeholder="Number of videos" value="8" min="1" max="100" />
   <button onclick="loadVideos()">Load Videos</button>
 
