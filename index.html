@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Rumble Video Viewer</title>
+  <title>Rumble iFrame Booster</title>
   <style>
     body {
       font-family: sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
+      background-color: #f9f9f9;
       padding: 20px;
+      margin: 0;
       text-align: center;
     }
 
@@ -25,11 +25,12 @@
       position: fixed;
       top: 10px;
       right: 10px;
-      background: black;
-      color: white;
+      background: #000;
+      color: #fff;
       padding: 10px 20px;
-      border-radius: 10px;
-      z-index: 999;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 1000;
     }
 
     #videoGrid {
@@ -48,16 +49,9 @@
 </head>
 <body>
 
-  <h2>Rumble Multi-Video Viewer</h2>
+  <h2>Rumble Multi-Viewer</h2>
 
-function getEmbedLink(rumbleUrl) {
-  if (rumbleUrl.includes("rumble.com/embed")) {
-    return rumbleUrl + "&autoplay=1&mute=1";
-  } else {
-    alert("Please use the Rumble embed link (starts with rumble.com/embed/...)");
-    return null;
-  }
-}
+  <input type="text" id="videoUrl" placeholder="Paste Rumble EMBED link here (https://rumble.com/embed/...)"/>
   <input type="number" id="videoCount" placeholder="Number of videos" value="8" min="1" max="100" />
   <button onclick="loadVideos()">Load Videos</button>
 
@@ -65,61 +59,44 @@ function getEmbedLink(rumbleUrl) {
   <div id="videoGrid"></div>
 
   <script>
-    let repeatCounter = 0;
-    let videoId = "";
+    let repeatCount = 0;
 
-    function extractRumbleEmbed(url) {
-      const match = url.match(/rumble\.com\/(?:embed)?(?:\/)?([a-z0-9\-]+)/i);
-      if (match && match[1]) {
-        return match[1];
-      }
-
-      const iframeMatch = url.match(/rumble\.com\/embed\/([a-zA-Z0-9]+)\.html/);
-      if (iframeMatch && iframeMatch[1]) {
-        return iframeMatch[1];
-      }
-
-      return null;
-    }
-
-    function getEmbedLink(rumbleUrl) {
-      const embedId = extractRumbleEmbed(rumbleUrl);
-      if (!embedId) return null;
-      return `https://rumble.com/embed/${embedId}/?autoplay=1&mute=1`;
+    function isValidEmbedUrl(url) {
+      return url.includes("rumble.com/embed/");
     }
 
     function loadVideos() {
       const url = document.getElementById("videoUrl").value.trim();
       const count = parseInt(document.getElementById("videoCount").value);
       const grid = document.getElementById("videoGrid");
-      const embedLink = getEmbedLink(url);
 
-      if (!embedLink) {
-        alert("Please enter a valid Rumble video link.");
+      if (!isValidEmbedUrl(url)) {
+        alert("Please paste a valid Rumble EMBED link (starts with https://rumble.com/embed/...)");
         return;
       }
 
-      grid.innerHTML = ""; // clear existing iframes
+      grid.innerHTML = ""; // Clear existing iframes
 
       for (let i = 0; i < count; i++) {
         const iframe = document.createElement("iframe");
-        iframe.src = embedLink;
+        iframe.src = url + "&autoplay=1&mute=1";
         iframe.allow = "autoplay";
         grid.appendChild(iframe);
       }
 
-      repeatCounter = 0;
+      repeatCount = 0;
       document.getElementById("counter").innerText = `Repeats: 0`;
 
       setInterval(() => {
         const iframes = document.querySelectorAll("iframe");
         iframes.forEach(iframe => {
-          iframe.src = embedLink; // reload to loop
+          iframe.src = url + "&autoplay=1&mute=1";
         });
-        repeatCounter++;
-        document.getElementById("counter").innerText = `Repeats: ${repeatCounter}`;
-      }, 60000); // reload every 60 seconds
+        repeatCount++;
+        document.getElementById("counter").innerText = `Repeats: ${repeatCount}`;
+      }, 60000); // Reload every 60 seconds
     }
   </script>
+
 </body>
 </html>
